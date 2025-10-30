@@ -435,7 +435,7 @@ function startPhishingGame() {
 let malwareTimer = 45;
 let malwareInterval = null;
 let popupsClosed = 0;
-let popupsTotal = 10;
+let popupsTotal = 20;
 let popupCreationInterval = null;
 
 function startMalwareGame() {
@@ -446,8 +446,7 @@ function startMalwareGame() {
     document.getElementById('popups-closed').textContent = '0';
     document.getElementById('malware-timer').textContent = formatTime(malwareTimer);
     
-    const container = document.getElementById('popup-container');
-    container.innerHTML = '';
+    const modal = document.getElementById('modal-malware');
     
     // Generar efecto de código cayendo
     generateCodeRainEffect();
@@ -457,12 +456,12 @@ function startMalwareGame() {
     // Crear ventanas emergentes progresivamente
     popupCreationInterval = setInterval(() => {
         if (popupsCreated < popupsTotal) {
-            createPopup(container);
+            createPopup(modal);
             popupsCreated++;
         } else {
             clearInterval(popupCreationInterval);
         }
-    }, 2000);
+    }, 800);
     
     // Timer
     malwareInterval = setInterval(() => {
@@ -515,16 +514,34 @@ function generateCodeRainEffect() {
     }
 }
 
-function createPopup(container) {
+function createPopup(modal) {
     const popup = document.createElement('div');
     popup.className = 'popup-window';
     
-    // Asegurar que el contenedor tenga dimensiones válidas
-    const maxLeft = Math.max(0, container.clientWidth - 250);
-    const maxTop = Math.max(0, container.clientHeight - 150);
+    // Reproducir sonido de apertura de ventana de Windows
+    playWindowOpenSound();
     
-    popup.style.left = randomBetween(0, maxLeft) + 'px';
-    popup.style.top = randomBetween(0, maxTop) + 'px';
+    // Obtener el modal-content como contenedor
+    const modalContent = modal.querySelector('.modal-content');
+    
+    // Dimensiones del popup
+    const popupWidth = 250;
+    const popupHeight = 150;
+    
+    // Obtener dimensiones del contenedor
+    const containerWidth = modalContent.clientWidth || 800;
+    const containerHeight = modalContent.clientHeight || 600;
+    
+    // Calcular máximos seguros
+    const maxLeft = Math.max(20, containerWidth - popupWidth - 20);
+    const maxTop = Math.max(100, containerHeight - popupHeight - 100); // Dejar espacio abajo para instrucciones
+    
+    // Posición aleatoria (evitando zona superior donde están las instrucciones)
+    const left = randomBetween(20, maxLeft);
+    const top = randomBetween(100, maxTop); // Empezar desde 100px para evitar header e instrucciones
+    
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
     
     const messages = [
         '¡Has ganado un iPhone!',
@@ -536,7 +553,17 @@ function createPopup(container) {
         'Descarga bloqueada',
         'Conexión perdida',
         'Windows Defender alerta',
-        'Virus detectado'
+        'Virus detectado',
+        '💰 Reclama tu premio AHORA',
+        '🚨 Sistema comprometido',
+        '⚠️ Acción inmediata requerida',
+        '🔒 Contraseña expirada',
+        '📧 Nuevo mensaje urgente',
+        '🎁 Regalo exclusivo para ti',
+        '💳 Verifica tu cuenta',
+        '⏰ Oferta por tiempo limitado',
+        '🛡️ Actualización de seguridad',
+        '📱 Sincronización requerida'
     ];
     
     popup.innerHTML = `
@@ -549,7 +576,7 @@ function createPopup(container) {
         </div>
     `;
     
-    container.appendChild(popup);
+    modalContent.appendChild(popup);
     
     popup.querySelector('.popup-close').addEventListener('click', () => {
         popup.remove();
@@ -562,6 +589,47 @@ function createPopup(container) {
             closeScenario('malware', true);
         }
     });
+}
+
+// Función para reproducir sonido de apertura de ventana de Windows XP
+function playWindowOpenSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const currentTime = audioContext.currentTime;
+        
+        // Crear dos osciladores para el sonido característico de Windows XP
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Configurar sonido tipo "ding" de Windows XP (dos tonos armónicos)
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+        
+        // Primera nota (más grave)
+        osc1.frequency.setValueAtTime(800, currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(800, currentTime + 0.08);
+        
+        // Segunda nota (más aguda, armónico)
+        osc2.frequency.setValueAtTime(1200, currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(1200, currentTime + 0.08);
+        
+        // Envelope suave para simular el "ding" de Windows XP
+        gainNode.gain.setValueAtTime(0, currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.15, currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.15);
+        
+        osc1.start(currentTime);
+        osc1.stop(currentTime + 0.15);
+        osc2.start(currentTime);
+        osc2.stop(currentTime + 0.15);
+    } catch (error) {
+        console.log('Audio no disponible:', error);
+    }
 }
 
 // DATA BREACH - Activar defensas en orden
@@ -582,8 +650,23 @@ function startDataBreachGame() {
     // Generar efecto Matrix
     generateMatrixEffect();
     
-    // Resetear defensas
-    const defenseItems = document.querySelectorAll('.defense-item');
+    // Desordenar defensas aleatoriamente
+    const defenseGrid = document.querySelector('#modal-databreach .defense-grid');
+    const defenseItems = Array.from(document.querySelectorAll('#modal-databreach .defense-item'));
+    
+    // Algoritmo Fisher-Yates para mezclar aleatoriamente
+    for (let i = defenseItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [defenseItems[i], defenseItems[j]] = [defenseItems[j], defenseItems[i]];
+    }
+    
+    // Limpiar el grid y volver a añadir en orden aleatorio
+    defenseGrid.innerHTML = '';
+    defenseItems.forEach(item => {
+        defenseGrid.appendChild(item);
+    });
+    
+    // Resetear defensas y añadir event listeners
     defenseItems.forEach(item => {
         item.classList.remove('active', 'error');
         const button = item.querySelector('.defense-toggle');
@@ -593,12 +676,9 @@ function startDataBreachGame() {
         // Clonar botón para remover event listeners previos
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
-    });
-    
-    // Event listeners para defensas (ahora con botones limpios)
-    const defenseButtons = document.querySelectorAll('.defense-toggle');
-    defenseButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        
+        // Añadir event listener al botón nuevo
+        newButton.addEventListener('click', function() {
             const defenseItem = this.closest('.defense-item');
             const order = parseInt(defenseItem.dataset.order);
             
@@ -758,11 +838,7 @@ function showFinalScreen(survived) {
             <h3>📱 EVALÚA ESTA EXPERIENCIA</h3>
             <p style="color: black;">Escanea el código QR para completar el formulario de evaluación</p>
             <div class="qr-code">
-                <div style="text-align: center;">
-                    📱<br><br>
-                    [CÓDIGO QR]<br><br>
-                    Escanea para evaluar
-                </div>
+                <img src="assets/images/qr_formulario.png" alt="QR Formulario" style="width: 200px; height: 200px; border: 3px solid #000; border-radius: 10px; background: white; padding: 10px;">
             </div>
             <p style="color: #666; font-size: 0.9em;">
                 Tu opinión nos ayuda a mejorar la experiencia
@@ -836,7 +912,7 @@ function handleTerminalCommand(command) {
         case 'about':
             addSystemLog('=== FATAL T-ERROR v1.0 ===', 'success');
             addSystemLog('Sistema de simulación de incidentes de ciberseguridad', 'normal');
-            addSystemLog('Proyecto educativo - Halloween 2024', 'normal');
+            addSystemLog('Proyecto educativo - Halloween 2025', 'normal');
             addSystemLog('Creado con 💀 y ☕', 'normal');
             break;
             

@@ -1012,12 +1012,13 @@ body {
 }
 
 .popup-container {
-    position: relative;
-    height: 400px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid var(--alert-red);
-    border-radius: 5px;
-    margin: 20px 0;
+    display: none; /* Oculto, los popups ahora aparecen en todo el modal */
+}
+
+#modal-malware .modal-content {
+    position: relative; /* Para que los popups se posicionen relativos a este contenedor */
+    overflow: visible; /* Permitir que los popups salgan del contenedor */
+    min-height: 600px; /* Altura mínima para tener espacio */
 }
 
 .popup-window {
@@ -1028,6 +1029,17 @@ body {
     min-width: 250px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     animation: scaleIn 0.3s;
+    z-index: 9999; /* Por encima de todo */
+    pointer-events: auto;
+}
+
+.game-instructions {
+    position: relative;
+    z-index: 5; /* Debajo de los popups */
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 5px;
+    pointer-events: auto;
 }
 
 .popup-header {
@@ -1176,7 +1188,7 @@ body {
 
 .defense-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     margin: 20px 0;
 }
@@ -1407,7 +1419,14 @@ body {
         font-size: 0.4em;
     }
 }
+/* Tablet - 2 columnas */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .defense-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
+/* Mobile - 1 columna */
 @media (max-width: 768px) {
     .warning-text h1 {
         font-size: 2em;
