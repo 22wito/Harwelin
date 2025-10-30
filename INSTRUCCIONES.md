@@ -1,5 +1,5 @@
 # 🎃 INSTRUCCIONES DE MONTAJE Y PUESTA EN ESCENA
-## EL BUGGER MALDITO - Centro de Ciberdefensa Comprometido
+## Fatal T-error - Centro de Ciberdefensa Comprometido
 
 ---
 

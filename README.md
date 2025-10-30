@@ -1,4 +1,4 @@
-# 🎃 EL BUGGER MALDITO
+# 🎃 Fatal T-error
 ## Simulador Interactivo de Incidentes de Ciberseguridad
 
 ![Estado: Comprometido](https://img.shields.io/badge/Estado-COMPROMETIDO-red?style=for-the-badge)
@@ -9,7 +9,7 @@
 
 ## 📋 Descripción del Proyecto
 
-**El Bugger Maldito** es una aplicación web interactiva de terror educativo creada para la actividad de Halloween del módulo de Ciberseguridad en Entornos de las TIC.
+**Fatal T-error** es una aplicación web interactiva de terror educativo creada para la actividad de Halloween del módulo de Ciberseguridad en Entornos de las TIC.
 
 La aplicación simula un **incidente de ciberseguridad real** donde un malware experimental llamado "El Bugger" ha comprometido los sistemas de un instituto. Los usuarios deben enfrentar cuatro escenarios de ataque diferentes mientras aprenden conceptos fundamentales de ciberseguridad.
 

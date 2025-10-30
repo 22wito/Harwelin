@@ -1,4 +1,4 @@
-# 🎃 EL BUGGER MALDITO - Sistema de Terror Cibernético Interactivo
+# 🎃 Fatal T-error - Sistema de Terror Cibernético Interactivo
 
 ## Objetivo del Proyecto
 Crear una aplicación web de terror interactiva para Halloween que simule un incidente de ciberseguridad real, donde los usuarios experimenten diferentes tipos de ataques mientras aprenden conceptos de protección digital.

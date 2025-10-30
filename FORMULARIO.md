@@ -1,9 +1,9 @@
-# 🎃 FORMULARIO DE EVALUACIÓN - EL BUGGER MALDITO
+# 🎃 FORMULARIO DE EVALUACIÓN - Fatal T-error
 
 ## Información para crear el Google Forms
 
 ### Configuración General
-- **Título**: Evaluación: El Bugger Maldito - Estación de Ciberdefensa
+- **Título**: Evaluación: Fatal T-error - Estación de Ciberdefensa
 - **Descripción**: 
   ```
   ¡Gracias por visitar nuestra estación del Centro de Ciberdefensa!
@@ -162,7 +162,7 @@ Mantén estos conceptos en mente:
 
 ¡Hasta la próxima y mantente seguro/a en el mundo digital!
 
-- Equipo El Bugger Maldito 🎃
+- Equipo Fatal T-error 🎃
   Clase DAW - Instituto [Nombre del Instituto]
 ```
 
