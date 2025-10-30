@@ -64,20 +64,19 @@ let logIndex = 0;
 
 // === FUNCIONES DE UTILIDAD ===
 
-function randomBetween(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
+const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-function formatTime(seconds) {
+const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
+};
 
-function getCurrentTime() {
-    const now = new Date();
-    return now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
+const getCurrentTime = () => new Date().toLocaleTimeString('es-ES', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit' 
+});
 
 function triggerGlitch() {
     console.log('⚡ Glitch effect triggered');
@@ -106,45 +105,22 @@ function addSystemLog(message, type = 'normal') {
     const logEntry = document.createElement('div');
     logEntry.className = `log-entry ${type}`;
     
-    const timestamp = document.createElement('span');
-    timestamp.className = 'timestamp';
-    timestamp.textContent = `[${getCurrentTime()}]`;
+    // Prefijos por tipo (optimizado con objeto literal)
+    const prefixes = {
+        critical: '[CRÍTICO] ',
+        warning: '[ALERTA] ',
+        success: '[ÉXITO] ',
+        normal: '[INFO] '
+    };
     
-    const msgText = document.createElement('span');
-    
-    // Añadir prefijo según tipo
-    let prefix = '';
-    switch(type) {
-        case 'critical':
-            prefix = '[CRÍTICO] ';
-            break;
-        case 'warning':
-            prefix = '[ALERTA] ';
-            break;
-        case 'success':
-            prefix = '[ÉXITO] ';
-            break;
-        case 'normal':
-            prefix = '[INFO] ';
-            break;
-    }
-    
-    msgText.textContent = prefix + message;
-    
-    logEntry.appendChild(timestamp);
-    logEntry.appendChild(msgText);
+    logEntry.innerHTML = `<span class="timestamp">[${getCurrentTime()}]</span><span>${prefixes[type]}${message}</span>`;
     logsContainer.appendChild(logEntry);
     
     // Limitar a últimas 50 líneas
     const logs = logsContainer.querySelectorAll('.log-entry');
-    if (logs.length > 50) {
-        logs[0].remove();
-    }
+    if (logs.length > 50) logs[0].remove();
     
-    // Auto-scroll al final - forzar scroll inmediatamente
-    logsContainer.scrollTop = logsContainer.scrollHeight;
-    
-    // También hacer scroll con requestAnimationFrame para asegurar renderizado
+    // Auto-scroll optimizado
     requestAnimationFrame(() => {
         logsContainer.scrollTop = logsContainer.scrollHeight;
     });
@@ -204,31 +180,26 @@ function startHealthDecrease() {
 
 // === SISTEMA DE AMENAZAS ===
 
+// Iconos de amenazas (constante global para evitar recrear)
+const THREAT_ICONS = {
+    ransomware: '🔒',
+    phishing: '📧',
+    malware: '☠️',
+    databreach: '🚨'
+};
+
 function updateThreatsCounter() {
-    const counter = document.getElementById('threats-counter');
-    const number = counter.querySelector('.threat-number');
+    const number = document.querySelector('#threats-counter .threat-number');
     number.textContent = threatsDetected;
-    
-    // Animación de actualización
     number.style.transform = 'scale(1.3)';
-    setTimeout(() => {
-        number.style.transform = 'scale(1)';
-    }, 300);
+    setTimeout(() => number.style.transform = 'scale(1)', 300);
 }
 
 function addThreatToList(threatName) {
     const list = document.getElementById('threats-list');
     const item = document.createElement('div');
     item.className = 'threat-item';
-    
-    const icons = {
-        ransomware: '🔒',
-        phishing: '📧',
-        malware: '☠️',
-        databreach: '🚨'
-    };
-    
-    item.textContent = `${icons[threatName]} ${threatName.toUpperCase()} detectado`;
+    item.textContent = `${THREAT_ICONS[threatName]} ${threatName.toUpperCase()} detectado`;
     list.insertBefore(item, list.firstChild);
 }
 
@@ -445,29 +416,12 @@ function generateRandomPhishingEmail() {
             subject: '⚠️ URGENTE: ACCESO SUSPENDIDO - Verificación Requerida INMEDIATA',
             subjectHint: 'Lenguaje de urgencia extrema',
             date: 'Hoy, 23:47',
-            body: `
-                <p>Estimado usuario,</p>
-                <p class="suspicious" data-suspicious="true" data-hint="Errores ortográficos graves">
-                    Hemos detectado <strong>activvidad sospechoza</strong> en su cuenta. 
-                    Por razones de seguirdad, su aceso ha sido temporalmente suspendido.
-                </p>
-                <p>
-                    Para <strong>reactivar su cuenta inmediatamente</strong>, debe verificar 
-                    su identidad haciendo clic en el siguiente enlace:
-                </p>
-                <p class="center">
-                    <a href="#" class="phishing-link suspicious" 
-                       data-suspicious="true" data-hint="URL sospechosa (no coincide con dominio oficial)">
-                        🔗 http://instituto-verificacion-segura.tk/login.php
-                    </a>
-                </p>
-                <p class="suspicious" data-suspicious="true" data-hint="Presión de tiempo para no pensar">
-                    <strong>⏰ ADVERTENCIA:</strong> Si no verifica su identidad en las próximas 
-                    2 horas, su cuenta será <span class="critical">ELIMINADA PERMANENTEMENTE</span>.
-                </p>
-                <p>Atentamente,<br>
-                <span style="color: #888;">Equipo de Seguridad del Instituto</span></p>
-            `
+            body: `<p>Estimado usuario,</p>
+<p class="suspicious" data-suspicious="true" data-hint="Errores ortográficos graves">Hemos detectado <strong>activvidad sospechoza</strong> en su cuenta. Por razones de seguirdad, su aceso ha sido temporalmente suspendido.</p>
+<p>Para <strong>reactivar su cuenta inmediatamente</strong>, debe verificar su identidad haciendo clic en el siguiente enlace:</p>
+<p class="center"><a href="#" class="phishing-link suspicious" data-suspicious="true" data-hint="URL sospechosa (no coincide con dominio oficial)">🔗 http://instituto-verificacion-segura.tk/login.php</a></p>
+<p class="suspicious" data-suspicious="true" data-hint="Presión de tiempo para no pensar"><strong>⏰ ADVERTENCIA:</strong> Si no verifica su identidad en las próximas 2 horas, su cuenta será <span class="critical">ELIMINADA PERMANENTEMENTE</span>.</p>
+<p>Atentamente,<br><span style="color: #888;">Equipo de Seguridad del Instituto</span></p>`
         },
         // Email 2: Banco - Premio millonario
         {
@@ -477,29 +431,12 @@ function generateRandomPhishingEmail() {
             subject: '🎉 ¡FELICIDADES! Has ganado 50.000€ - Reclama tu premio',
             subjectHint: 'Promesa de dinero fácil (demasiado bueno para ser verdad)',
             date: 'Hoy, 08:15',
-            body: `
-                <p>Estimado cliente,</p>
-                <p>
-                    ¡Enhorabuena! Ha sido seleccionado como ganador de nuestro 
-                    <strong>sorteo anual de clientes Premium</strong>.
-                </p>
-                <p class="suspicious" data-suspicious="true" data-hint="Errores gramaticales y ortográficos">
-                    Su premio de <strong>50.000€</strong> esta esperando ser reclamado. 
-                    Para resivir el dinero, deve completar la verificacion de identidad.
-                </p>
-                <p class="center">
-                    <a href="#" class="phishing-link suspicious" 
-                       data-suspicious="true" data-hint="URL con dominio extraño (.tk es sospechoso)">
-                        🔗 https://premio-banco-santander.tk/verificar/ganador
-                    </a>
-                </p>
-                <p class="suspicious" data-suspicious="true" data-hint="Presión temporal injustificada">
-                    <strong>⏰ IMPORTANTE:</strong> Tiene solo <span class="critical">24 HORAS</span> 
-                    para reclamar su premio, después será asignado a otro cliente.
-                </p>
-                <p>Cordialmente,<br>
-                <span style="color: #888;">Departamento de Premios - Banco Santander</span></p>
-            `
+            body: `<p>Estimado cliente,</p>
+<p>¡Enhorabuena! Ha sido seleccionado como ganador de nuestro <strong>sorteo anual de clientes Premium</strong>.</p>
+<p class="suspicious" data-suspicious="true" data-hint="Errores gramaticales y ortográficos">Su premio de <strong>50.000€</strong> esta esperando ser reclamado. Para resivir el dinero, deve completar la verificacion de identidad.</p>
+<p class="center"><a href="#" class="phishing-link suspicious" data-suspicious="true" data-hint="URL con dominio extraño (.tk es sospechoso)">🔗 https://premio-banco-santander.tk/verificar/ganador</a></p>
+<p class="suspicious" data-suspicious="true" data-hint="Presión temporal injustificada"><strong>⏰ IMPORTANTE:</strong> Tiene solo <span class="critical">24 HORAS</span> para reclamar su premio, después será asignado a otro cliente.</p>
+<p>Cordialmente,<br><span style="color: #888;">Departamento de Premios - Banco Santander</span></p>`
         },
         // Email 3: Amazon - Paquete retenido
         {
@@ -509,77 +446,38 @@ function generateRandomPhishingEmail() {
             subject: '📦 Tu paquete está retenido - Acción requerida',
             subjectHint: 'Urgencia artificial sobre un paquete inexistente',
             date: 'Hoy, 14:32',
-            body: `
-                <p>Hola,</p>
-                <p>
-                    Su paquete con número de seguimiento <strong>#ES2847291</strong> 
-                    ha sido retenido en nuestro centro de distribución.
-                </p>
-                <p class="suspicious" data-suspicious="true" data-hint="Faltas de ortografía evidentes">
-                    Para liberar el envio, deve abonar las tasas aduaneras pendientes 
-                    de <strong>2,95€</strong>. Si no paga en 48 horas, el paquete sera devuelto.
-                </p>
-                <p class="center">
-                    <a href="#" class="phishing-link suspicious" 
-                       data-suspicious="true" data-hint="URL sospechosa (no es dominio oficial de Amazon)">
-                        🔗 http://amazon-tasas-envio.ml/pagar?id=ES2847291
-                    </a>
-                </p>
-                <p class="suspicious" data-suspicious="true" data-hint="Amenaza de pérdida para crear urgencia">
-                    <strong>⚠️ ATENCIÓN:</strong> Si no realiza el pago antes de 
-                    <span class="critical">48 HORAS</span>, su paquete será destruido 
-                    y no podrá reclamar reembolso.
-                </p>
-                <p>Saludos,<br>
-                <span style="color: #888;">Centro de Logística Amazon</span></p>
-            `
+            body: `<p>Hola,</p>
+<p>Su paquete con número de seguimiento <strong>#ES2847291</strong> ha sido retenido en nuestro centro de distribución.</p>
+<p class="suspicious" data-suspicious="true" data-hint="Faltas de ortografía evidentes">Para liberar el envio, deve abonar las tasas aduaneras pendientes de <strong>2,95€</strong>. Si no paga en 48 horas, el paquete sera devuelto.</p>
+<p class="center"><a href="#" class="phishing-link suspicious" data-suspicious="true" data-hint="URL sospechosa (no es dominio oficial de Amazon)">🔗 http://amazon-tasas-envio.ml/pagar?id=ES2847291</a></p>
+<p class="suspicious" data-suspicious="true" data-hint="Amenaza de pérdida para crear urgencia"><strong>⚠️ ATENCIÓN:</strong> Si no realiza el pago antes de <span class="critical">48 HORAS</span>, su paquete será destruido y no podrá reclamar reembolso.</p>
+<p>Saludos,<br><span style="color: #888;">Centro de Logística Amazon</span></p>`
         }
     ];
     
     // Seleccionar email aleatorio
     const selectedEmail = emails[randomBetween(0, emails.length - 1)];
     
-    // Generar HTML del email
-    const emailHTML = `
-        <div class="email-header">
-            <div class="email-buttons">
-                <button class="email-btn">← Volver</button>
-                <button class="email-btn">Responder</button>
-                <button class="email-btn critical">⚠️ Reportar Spam</button>
-            </div>
-        </div>
-        
-        <div class="email-metadata">
-            <div class="email-field">
-                <strong>De:</strong> 
-                <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.fromHint}">
-                    ${selectedEmail.from}
-                </span>
-            </div>
-            <div class="email-field">
-                <strong>Para:</strong> ${selectedEmail.to}
-            </div>
-            <div class="email-field">
-                <strong>Asunto:</strong> 
-                <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.subjectHint}">
-                    ${selectedEmail.subject}
-                </span>
-            </div>
-            <div class="email-field">
-                <strong>Fecha:</strong> ${selectedEmail.date}
-            </div>
-        </div>
-        
-        <div class="email-body">
-            ${selectedEmail.body}
-            
-            <div class="email-footer">
-                <small style="color: #666;">
-                    Este es un mensaje automático. No responda a este correo.
-                </small>
-            </div>
-        </div>
-    `;
+    // Generar HTML del email (optimizado sin espacios innecesarios)
+    const emailHTML = `<div class="email-header">
+<div class="email-buttons">
+<button class="email-btn">← Volver</button>
+<button class="email-btn">Responder</button>
+<button class="email-btn critical">⚠️ Reportar Spam</button>
+</div>
+</div>
+<div class="email-metadata">
+<div class="email-field"><strong>De:</strong> <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.fromHint}">${selectedEmail.from}</span></div>
+<div class="email-field"><strong>Para:</strong> ${selectedEmail.to}</div>
+<div class="email-field"><strong>Asunto:</strong> <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.subjectHint}">${selectedEmail.subject}</span></div>
+<div class="email-field"><strong>Fecha:</strong> ${selectedEmail.date}</div>
+</div>
+<div class="email-body">
+${selectedEmail.body}
+<div class="email-footer">
+<small style="color: #666;">Este es un mensaje automático. No responda a este correo.</small>
+</div>
+</div>`;
     
     // Insertar en el contenedor
     document.getElementById('phishing-email-container').innerHTML = emailHTML;
@@ -630,112 +528,61 @@ function startMalwareGame() {
     }, 1000);
 }
 
+// Snippets de código para efecto (constante global)
+const CODE_SNIPPETS = ['system32.dll', 'keylogger.exe', 'malware_injection', '0x7FFE0000', 
+    'HKEY_LOCAL_MACHINE', 'rootkit_module', 'process_injection', 'credential_harvester', 
+    'network_scanner', 'payload_delivery'];
+
 // Generar efecto de código corriendo a alta velocidad
 function generateCodeRainEffect() {
     const codeRain = document.querySelector('.code-rain');
     if (!codeRain) return;
     
     codeRain.innerHTML = '';
-    const codeSnippets = [
-        'system32.dll',
-        'keylogger.exe',
-        'malware_injection',
-        '0x7FFE0000',
-        'HKEY_LOCAL_MACHINE',
-        'rootkit_module',
-        'process_injection',
-        'credential_harvester',
-        'network_scanner',
-        'payload_delivery'
-    ];
+    const fragment = document.createDocumentFragment();
     
-    // Crear múltiples columnas de código
     for (let i = 0; i < 15; i++) {
         const column = document.createElement('div');
-        column.style.cssText = `
-            position: absolute;
-            left: ${i * 7}%;
-            top: -100%;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-            color: var(--terminal-green);
-            opacity: 0.8;
-            animation: matrixRain ${randomBetween(3, 6)}s linear infinite;
-            animation-delay: ${randomBetween(0, 20) * 0.1}s;
-        `;
-        column.textContent = codeSnippets[randomBetween(0, codeSnippets.length - 1)];
-        codeRain.appendChild(column);
+        column.style.cssText = `position: absolute; left: ${i * 7}%; top: -100%; font-family: 'Courier New', monospace; font-size: 0.8em; color: var(--terminal-green); opacity: 0.8; animation: matrixRain ${randomBetween(3, 6)}s linear infinite; animation-delay: ${randomBetween(0, 20) * 0.1}s;`;
+        column.textContent = CODE_SNIPPETS[randomBetween(0, CODE_SNIPPETS.length - 1)];
+        fragment.appendChild(column);
     }
+    
+    codeRain.appendChild(fragment);
 }
+
+// Mensajes de popup (constante global)
+const POPUP_MESSAGES = ['¡Has ganado un iPhone!', 'Tu PC está infectado', 
+    'Actualización urgente requerida', 'Haz clic aquí para continuar', 
+    'Error crítico del sistema', 'Alerta de seguridad', 'Descarga bloqueada', 
+    'Conexión perdida', 'Windows Defender alerta', 'Virus detectado', 
+    '💰 Reclama tu premio AHORA', '🚨 Sistema comprometido', 
+    '⚠️ Acción inmediata requerida', '🔒 Contraseña expirada', 
+    '📧 Nuevo mensaje urgente', '🎁 Regalo exclusivo para ti', 
+    '💳 Verifica tu cuenta', '⏰ Oferta por tiempo limitado', 
+    '🛡️ Actualización de seguridad', '📱 Sincronización requerida'];
 
 function createPopup(modal) {
     const popup = document.createElement('div');
     popup.className = 'popup-window';
     
-    // Reproducir sonido de apertura de ventana de Windows
     playWindowOpenSound();
     
-    // Obtener el modal-content como contenedor
     const modalContent = modal.querySelector('.modal-content');
+    const { clientWidth: containerWidth = 800, clientHeight: containerHeight = 600 } = modalContent;
     
-    // Dimensiones del popup
-    const popupWidth = 250;
-    const popupHeight = 150;
-    
-    // Obtener dimensiones del contenedor
-    const containerWidth = modalContent.clientWidth || 800;
-    const containerHeight = modalContent.clientHeight || 600;
-    
-    // Calcular máximos seguros
+    const popupWidth = 250, popupHeight = 150;
     const maxLeft = Math.max(20, containerWidth - popupWidth - 20);
-    const maxTop = Math.max(100, containerHeight - popupHeight - 100); // Dejar espacio abajo para instrucciones
+    const maxTop = Math.max(100, containerHeight - popupHeight - 100);
     
-    // Posición aleatoria (evitando zona superior donde están las instrucciones)
-    const left = randomBetween(20, maxLeft);
-    const top = randomBetween(100, maxTop); // Empezar desde 100px para evitar header e instrucciones
-    
-    popup.style.left = left + 'px';
-    popup.style.top = top + 'px';
-    
-    const messages = [
-        '¡Has ganado un iPhone!',
-        'Tu PC está infectado',
-        'Actualización urgente requerida',
-        'Haz clic aquí para continuar',
-        'Error crítico del sistema',
-        'Alerta de seguridad',
-        'Descarga bloqueada',
-        'Conexión perdida',
-        'Windows Defender alerta',
-        'Virus detectado',
-        '💰 Reclama tu premio AHORA',
-        '🚨 Sistema comprometido',
-        '⚠️ Acción inmediata requerida',
-        '🔒 Contraseña expirada',
-        '📧 Nuevo mensaje urgente',
-        '🎁 Regalo exclusivo para ti',
-        '💳 Verifica tu cuenta',
-        '⏰ Oferta por tiempo limitado',
-        '🛡️ Actualización de seguridad',
-        '📱 Sincronización requerida'
-    ];
-    
-    popup.innerHTML = `
-        <div class="popup-header">
-            <span class="popup-title">${messages[randomBetween(0, messages.length - 1)]}</span>
-            <button class="popup-close">×</button>
-        </div>
-        <div class="popup-body">
-            ⚠️ Acción requerida inmediatamente
-        </div>
-    `;
+    popup.style.cssText = `left: ${randomBetween(20, maxLeft)}px; top: ${randomBetween(100, maxTop)}px;`;
+    popup.innerHTML = `<div class="popup-header"><span class="popup-title">${POPUP_MESSAGES[randomBetween(0, POPUP_MESSAGES.length - 1)]}</span><button class="popup-close">×</button></div><div class="popup-body">⚠️ Acción requerida inmediatamente</div>`;
     
     modalContent.appendChild(popup);
     
     popup.querySelector('.popup-close').addEventListener('click', () => {
         popup.remove();
-        popupsClosed++;
-        document.getElementById('popups-closed').textContent = popupsClosed;
+        document.getElementById('popups-closed').textContent = ++popupsClosed;
         
         if (popupsClosed === popupsTotal) {
             clearInterval(malwareInterval);
@@ -745,10 +592,16 @@ function createPopup(modal) {
     });
 }
 
+// Contexto de audio global (reutilizable para mejor rendimiento)
+let audioContext = null;
+
 // Función para reproducir sonido de apertura de ventana de Windows XP
 function playWindowOpenSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Crear contexto solo una vez y reutilizarlo
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
         const currentTime = audioContext.currentTime;
         
         // Crear dos osciladores para el sonido característico de Windows XP
@@ -875,16 +728,16 @@ function startDataBreachGame() {
     }, 1000);
 }
 
+// Caracteres Matrix (constante global)
+const MATRIX_CHARS = '01アイウエオカキクケコサシスセソタチツテト';
+
 function generateMatrixEffect() {
     const columns = document.querySelectorAll('.matrix-column');
     columns.forEach((column, index) => {
-        const chars = '01アイウエオカキクケコサシスセソタチツテト';
-        let text = '';
-        for (let i = 0; i < 50; i++) {
-            text += chars[randomBetween(0, chars.length - 1)] + '<br>';
-        }
-        column.innerHTML = text;
-        column.style.animationDelay = (index * 0.5) + 's';
+        column.innerHTML = Array(50).fill(0).map(() => 
+            MATRIX_CHARS[randomBetween(0, MATRIX_CHARS.length - 1)]
+        ).join('<br>');
+        column.style.animationDelay = `${index * 0.5}s`;
     });
 }
 
@@ -1209,7 +1062,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // === EFECTO MATRIX DE FONDO ===
 let matrixInterval = null;
 
-// Generar efecto Matrix en los modales
+// Caracteres para efecto Matrix extendido (constante global)
+const MATRIX_EXTENDED = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+// Generar efecto Matrix en los modales (optimizado con fragment)
 function generateModalMatrixEffect(modal) {
     const matrixBg = modal.querySelector('.modal-matrix-bg');
     if (!matrixBg) {
@@ -1218,71 +1074,49 @@ function generateModalMatrixEffect(modal) {
     }
     
     console.log('🎨 Generando efecto Matrix en modal');
-    
-    // Limpiar efecto anterior si existe
     matrixBg.innerHTML = '';
     
-    // Crear más columnas para efecto continuo
-    const numColumns = Math.floor(window.innerWidth / 15); // Más columnas (cada 15px en lugar de 20px)
-    const characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
+    const numColumns = Math.floor(window.innerWidth / 15);
+    const fragment = document.createDocumentFragment();
     console.log(`📊 Creando ${numColumns} columnas Matrix`);
     
     for (let i = 0; i < numColumns; i++) {
         const column = document.createElement('div');
         column.className = 'matrix-column';
-        column.style.left = `${i * 15}px`; // Columnas más juntas
+        const duration = randomBetween(15, 30);
         
-        // Duración más larga y variada para efecto más natural
-        const duration = randomBetween(15, 30); // 15-30 segundos
-        const delay = -(randomBetween(0, duration)); // Delay negativo para que empiecen en diferentes posiciones
+        column.style.cssText = `left: ${i * 15}px; animation-duration: ${duration}s; animation-delay: -${randomBetween(0, duration)}s;`;
+        column.textContent = Array(randomBetween(30, 60)).fill(0).map(() => 
+            MATRIX_EXTENDED[randomBetween(0, MATRIX_EXTENDED.length - 1)]
+        ).join('\n');
         
-        column.style.animationDuration = `${duration}s`;
-        column.style.animationDelay = `${delay}s`;
-        
-        // Generar más texto para columnas más largas
-        let text = '';
-        const length = randomBetween(30, 60); // Textos más largos
-        for (let j = 0; j < length; j++) {
-            text += characters[randomBetween(0, characters.length - 1)] + '\n';
-        }
-        column.textContent = text;
-        
-        matrixBg.appendChild(column);
+        fragment.appendChild(column);
     }
+    
+    matrixBg.appendChild(fragment);
 }
 
 function startMatrixEffect() {
     const matrixBg = document.getElementById('matrix-bg-effect');
     if (!matrixBg) return;
     
-    // Limpiar efecto anterior si existe
     matrixBg.innerHTML = '';
-    
-    // Activar visibilidad
     matrixBg.classList.add('active');
     
-    // Crear columnas de código cayendo
     const numColumns = Math.floor(window.innerWidth / 20);
-    const characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const fragment = document.createDocumentFragment();
     
     for (let i = 0; i < numColumns; i++) {
         const column = document.createElement('div');
         column.className = 'matrix-column';
-        column.style.left = `${i * 20}px`;
-        column.style.animationDuration = `${randomBetween(10, 20)}s`;
-        column.style.animationDelay = `${randomBetween(0, 50) * 0.1}s`;
-        
-        // Generar texto aleatorio
-        let text = '';
-        const length = randomBetween(10, 30);
-        for (let j = 0; j < length; j++) {
-            text += characters[randomBetween(0, characters.length - 1)] + '\n';
-        }
-        column.textContent = text;
-        
-        matrixBg.appendChild(column);
+        column.style.cssText = `left: ${i * 20}px; animation-duration: ${randomBetween(10, 20)}s; animation-delay: ${randomBetween(0, 50) * 0.1}s;`;
+        column.textContent = Array(randomBetween(10, 30)).fill(0).map(() => 
+            MATRIX_EXTENDED[randomBetween(0, MATRIX_EXTENDED.length - 1)]
+        ).join('\n');
+        fragment.appendChild(column);
     }
+    
+    matrixBg.appendChild(fragment);
 }
 
 function stopMatrixEffect() {
@@ -1290,11 +1124,7 @@ function stopMatrixEffect() {
     if (!matrixBg) return;
     
     matrixBg.classList.remove('active');
-    
-    // Limpiar después de la transición
-    setTimeout(() => {
-        matrixBg.innerHTML = '';
-    }, 500);
+    setTimeout(() => matrixBg.innerHTML = '', 500);
 }
 
 // === EXPORTS (para debugging en consola) ===
