@@ -401,6 +401,9 @@ function startPhishingGame() {
     phishingFound = 0;
     document.getElementById('phishing-found').textContent = '0';
     
+    // Generar email aleatorio
+    generateRandomPhishingEmail();
+    
     // Resetear elementos sospechosos
     const suspiciousElements = document.querySelectorAll('#modal-phishing .suspicious');
     suspiciousElements.forEach(element => {
@@ -429,6 +432,157 @@ function startPhishingGame() {
             }
         });
     });
+}
+
+// Generar email de phishing aleatorio
+function generateRandomPhishingEmail() {
+    const emails = [
+        // Email 1: Instituto - Verificación de seguridad
+        {
+            from: 'urgente_seguridad@institutto.es',
+            fromHint: 'Dominio mal escrito (institutto en vez de instituto)',
+            to: 'tu_email@instituto.es',
+            subject: '⚠️ URGENTE: ACCESO SUSPENDIDO - Verificación Requerida INMEDIATA',
+            subjectHint: 'Lenguaje de urgencia extrema',
+            date: 'Hoy, 23:47',
+            body: `
+                <p>Estimado usuario,</p>
+                <p class="suspicious" data-suspicious="true" data-hint="Errores ortográficos graves">
+                    Hemos detectado <strong>activvidad sospechoza</strong> en su cuenta. 
+                    Por razones de seguirdad, su aceso ha sido temporalmente suspendido.
+                </p>
+                <p>
+                    Para <strong>reactivar su cuenta inmediatamente</strong>, debe verificar 
+                    su identidad haciendo clic en el siguiente enlace:
+                </p>
+                <p class="center">
+                    <a href="#" class="phishing-link suspicious" 
+                       data-suspicious="true" data-hint="URL sospechosa (no coincide con dominio oficial)">
+                        🔗 http://instituto-verificacion-segura.tk/login.php
+                    </a>
+                </p>
+                <p class="suspicious" data-suspicious="true" data-hint="Presión de tiempo para no pensar">
+                    <strong>⏰ ADVERTENCIA:</strong> Si no verifica su identidad en las próximas 
+                    2 horas, su cuenta será <span class="critical">ELIMINADA PERMANENTEMENTE</span>.
+                </p>
+                <p>Atentamente,<br>
+                <span style="color: #888;">Equipo de Seguridad del Instituto</span></p>
+            `
+        },
+        // Email 2: Banco - Premio millonario
+        {
+            from: 'notificaciones@bancosantander-secure.com',
+            fromHint: 'Dominio sospechoso (bancosantander-secure.com no es oficial)',
+            to: 'tu_email@gmail.com',
+            subject: '🎉 ¡FELICIDADES! Has ganado 50.000€ - Reclama tu premio',
+            subjectHint: 'Promesa de dinero fácil (demasiado bueno para ser verdad)',
+            date: 'Hoy, 08:15',
+            body: `
+                <p>Estimado cliente,</p>
+                <p>
+                    ¡Enhorabuena! Ha sido seleccionado como ganador de nuestro 
+                    <strong>sorteo anual de clientes Premium</strong>.
+                </p>
+                <p class="suspicious" data-suspicious="true" data-hint="Errores gramaticales y ortográficos">
+                    Su premio de <strong>50.000€</strong> esta esperando ser reclamado. 
+                    Para resivir el dinero, deve completar la verificacion de identidad.
+                </p>
+                <p class="center">
+                    <a href="#" class="phishing-link suspicious" 
+                       data-suspicious="true" data-hint="URL con dominio extraño (.tk es sospechoso)">
+                        🔗 https://premio-banco-santander.tk/verificar/ganador
+                    </a>
+                </p>
+                <p class="suspicious" data-suspicious="true" data-hint="Presión temporal injustificada">
+                    <strong>⏰ IMPORTANTE:</strong> Tiene solo <span class="critical">24 HORAS</span> 
+                    para reclamar su premio, después será asignado a otro cliente.
+                </p>
+                <p>Cordialmente,<br>
+                <span style="color: #888;">Departamento de Premios - Banco Santander</span></p>
+            `
+        },
+        // Email 3: Amazon - Paquete retenido
+        {
+            from: 'envios@amazon-delivery.net',
+            fromHint: 'Dominio falso (amazon-delivery.net no es de Amazon)',
+            to: 'cliente@email.com',
+            subject: '📦 Tu paquete está retenido - Acción requerida',
+            subjectHint: 'Urgencia artificial sobre un paquete inexistente',
+            date: 'Hoy, 14:32',
+            body: `
+                <p>Hola,</p>
+                <p>
+                    Su paquete con número de seguimiento <strong>#ES2847291</strong> 
+                    ha sido retenido en nuestro centro de distribución.
+                </p>
+                <p class="suspicious" data-suspicious="true" data-hint="Faltas de ortografía evidentes">
+                    Para liberar el envio, deve abonar las tasas aduaneras pendientes 
+                    de <strong>2,95€</strong>. Si no paga en 48 horas, el paquete sera devuelto.
+                </p>
+                <p class="center">
+                    <a href="#" class="phishing-link suspicious" 
+                       data-suspicious="true" data-hint="URL sospechosa (no es dominio oficial de Amazon)">
+                        🔗 http://amazon-tasas-envio.ml/pagar?id=ES2847291
+                    </a>
+                </p>
+                <p class="suspicious" data-suspicious="true" data-hint="Amenaza de pérdida para crear urgencia">
+                    <strong>⚠️ ATENCIÓN:</strong> Si no realiza el pago antes de 
+                    <span class="critical">48 HORAS</span>, su paquete será destruido 
+                    y no podrá reclamar reembolso.
+                </p>
+                <p>Saludos,<br>
+                <span style="color: #888;">Centro de Logística Amazon</span></p>
+            `
+        }
+    ];
+    
+    // Seleccionar email aleatorio
+    const selectedEmail = emails[randomBetween(0, emails.length - 1)];
+    
+    // Generar HTML del email
+    const emailHTML = `
+        <div class="email-header">
+            <div class="email-buttons">
+                <button class="email-btn">← Volver</button>
+                <button class="email-btn">Responder</button>
+                <button class="email-btn critical">⚠️ Reportar Spam</button>
+            </div>
+        </div>
+        
+        <div class="email-metadata">
+            <div class="email-field">
+                <strong>De:</strong> 
+                <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.fromHint}">
+                    ${selectedEmail.from}
+                </span>
+            </div>
+            <div class="email-field">
+                <strong>Para:</strong> ${selectedEmail.to}
+            </div>
+            <div class="email-field">
+                <strong>Asunto:</strong> 
+                <span class="suspicious" data-suspicious="true" data-hint="${selectedEmail.subjectHint}">
+                    ${selectedEmail.subject}
+                </span>
+            </div>
+            <div class="email-field">
+                <strong>Fecha:</strong> ${selectedEmail.date}
+            </div>
+        </div>
+        
+        <div class="email-body">
+            ${selectedEmail.body}
+            
+            <div class="email-footer">
+                <small style="color: #666;">
+                    Este es un mensaje automático. No responda a este correo.
+                </small>
+            </div>
+        </div>
+    `;
+    
+    // Insertar en el contenedor
+    document.getElementById('phishing-email-container').innerHTML = emailHTML;
 }
 
 // MALWARE - Cerrar ventanas emergentes

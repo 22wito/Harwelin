@@ -186,9 +186,7 @@ body {
     50%, 100% { opacity: 0; }
 }
 
-.blink-text {
-    animation: blink 1s infinite;
-}
+/* Animación blink eliminada - ya no se usa */
 
 /* Fade In */
 @keyframes fadeIn {

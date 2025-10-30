@@ -193,65 +193,8 @@
                 </div>
             </div>
             
-            <div class="email-window">
-                <div class="email-header">
-                    <div class="email-buttons">
-                        <button class="email-btn">← Volver</button>
-                        <button class="email-btn">Responder</button>
-                        <button class="email-btn critical">⚠️ Reportar Spam</button>
-                    </div>
-                </div>
-                
-                <div class="email-metadata">
-                    <div class="email-field">
-                        <strong>De:</strong> 
-                        <span class="suspicious" data-suspicious="true" data-hint="Dominio sospechoso">
-                            urgente_seguridad@institutto.es
-                        </span>
-                    </div>
-                    <div class="email-field">
-                        <strong>Para:</strong> tu_email@instituto.es
-                    </div>
-                    <div class="email-field">
-                        <strong>Asunto:</strong> 
-                        <span class="suspicious" data-suspicious="true" data-hint="Lenguaje de urgencia extrema">
-                            ⚠️ URGENTE: ACCESO SUSPENDIDO - Verificación Requerida INMEDIATA
-                        </span>
-                    </div>
-                    <div class="email-field">
-                        <strong>Fecha:</strong> Hoy, 23:47
-                    </div>
-                </div>
-                
-                <div class="email-body">
-                    <p>Estimado usuario,</p>
-                    <p class="suspicious" data-suspicious="true" data-hint="Errores ortográficos graves">
-                        Hemos detectado <strong>activvidad sospechoza</strong> en su cuenta. 
-                        Por razones de seguirdad, su aceso ha sido temporalmente suspendido.
-                    </p>
-                    <p>
-                        Para <strong>reactivar su cuenta inmediatamente</strong>, debe verificar 
-                        su identidad haciendo clic en el siguiente enlace:
-                    </p>
-                    <p class="center">
-                        <a href="#" class="phishing-link suspicious blink-text" 
-                           data-suspicious="true" data-hint="URL sospechosa (no coincide con dominio oficial)">
-                            🔗 http://instituto-verificacion-segura.tk/login.php
-                        </a>
-                    </p>
-                    <p class="suspicious" data-suspicious="true" data-hint="Presión de tiempo para no pensar">
-                        <strong>⏰ ADVERTENCIA:</strong> Si no verifica su identidad en las próximas 
-                        2 horas, su cuenta será <span class="critical">ELIMINADA PERMANENTEMENTE</span>.
-                    </p>
-                    <p>Atentamente,<br>
-                    <span style="color: #888;">Equipo de Seguridad del Instituto</span></p>
-                    
-                    <div class="email-footer">
-                        <small style="color: #666;">
-                            Este es un mensaje automático. No responda a este correo.
-                        </small>
-                    </div>
-                </div>
+            <div class="email-window" id="phishing-email-container">
+                <!-- Contenido del email generado dinámicamente -->
             </div>
             
             <div class="educational-content">
