@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fatal T-error | El Bugger Maldito</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <main id="app" class="app">
+    <section id="splash-screen" class="screen active">
+      <div class="splash-content">
+        <pre class="ascii-logo" aria-label="Logo del Bugger">
+███████╗██╗     ███████╗██╗         ████████╗███████╗██████╗ ██████╗ ██████╗
+██╔════╝██║     ██╔════╝██║         ╚══██╔══╝██╔════╝██╔══██╗██╔══██╗██╔══██╗
+█████╗  ██║     █████╗  ██║            ██║   █████╗  ██████╔╝██████╔╝██████╔╝
+██╔══╝  ██║     ██╔══╝  ██║            ██║   ██╔══╝  ██╔══██╗██╔══██╗██╔══██╗
+██║     ███████╗███████╗███████╗       ██║   ███████╗██║  ██║██║  ██║██║  ██║
+╚═╝     ╚══════╝╚══════╝╚══════╝       ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+        </pre>
+        <p class="splash-subtitle glitch" role="alert">SISTEMA COMPROMETIDO - DETECTADA AMENAZA CRÍTICA</p>
+        <button id="start-btn" class="btn btn-start" type="button">INICIAR PROTOCOLO DE EMERGENCIA</button>
+        <p class="splash-hint">Recomendado: activar pantalla completa con F11</p>
+      </div>
+    </section>
+
+    <section id="terminal-screen" class="screen hidden" aria-live="polite">
+      <header class="system-header">
+        <div class="system-meta">
+          <span id="clock" class="meta-item" aria-label="Fecha y hora"></span>
+          <span class="meta-item">IP: <strong>192.168.66.13</strong></span>
+          <span class="meta-item">ESTADO: <strong id="system-state">COMPROMETIDO</strong></span>
+        </div>
+        <div class="health-container" role="status" aria-live="assertive">
+          <span class="health-label">Salud del sistema</span>
+          <div class="health-bar" aria-hidden="true">
+            <div id="health-fill" class="health-fill" style="width: 100%"></div>
+          </div>
+          <span id="health-value" class="health-value">100%</span>
+        </div>
+      </header>
+
+      <section class="main-grid">
+        <div class="terminal" aria-live="off">
+          <div id="log-wrapper" class="log-wrapper" role="log"></div>
+          <div class="terminal-input">
+            <label class="sr-only" for="terminal-input">Escribe un comando</label>
+            <span class="prompt">SISTEMA_INFECTADO@bugger:~$</span>
+            <input id="terminal-input" name="terminal-input" autocomplete="off" spellcheck="false" aria-label="Entrada del terminal">
+          </div>
+        </div>
+        <aside class="sidebar" aria-label="Panel lateral">
+          <div class="threat-card">
+            <h2 class="threat-title">Amenazas detectadas</h2>
+            <p id="threat-count" class="threat-count">0</p>
+          </div>
+          <div class="intel-card">
+            <h2 class="intel-title">Intel de la Amenaza</h2>
+            <ul id="intel-list" class="intel-list"></ul>
+          </div>
+          <div class="countdown-card">
+            <h2 class="countdown-title">Tiempo en línea</h2>
+            <p id="uptime" class="uptime">00:00</p>
+          </div>
+        </aside>
+      </section>
+    </section>
+
+    <section id="scenario-container" aria-live="assertive" class="hidden"></section>
+
+    <section id="final-screen" class="screen hidden" aria-live="polite">
+      <div class="final-card">
+        <h1 id="final-title" class="final-title"></h1>
+        <p id="final-summary" class="final-summary"></p>
+        <div class="final-stats">
+          <p><strong>Puntuación:</strong> <span id="final-score"></span></p>
+          <p><strong>Amenazas neutralizadas:</strong> <span id="final-threats"></span></p>
+          <p><strong>Tiempo de supervivencia:</strong> <span id="final-time"></span></p>
+        </div>
+        <div id="final-lessons" class="final-lessons"></div>
+        <div class="qr-section">
+          <div id="qr-placeholder" class="qr-placeholder">Escanea para evaluar</div>
+          <p class="qr-hint">Comparte tu feedback escaneando el código</p>
+        </div>
+        <button id="restart-btn" class="btn btn-restart" type="button">Reiniciar Simulación</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
