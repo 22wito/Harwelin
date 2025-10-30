@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎃 Fatal T-Error - Sistema Comprometido</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Efecto de scanlines CRT -->
+    <div class="scanlines"></div>
+    
+    <!-- Efecto Matrix de fondo (aparece con amenazas) -->
+    <div id="matrix-bg-effect" class="matrix-bg-effect"></div>
+
+    <!-- PANTALLA DE INICIO (SPLASH SCREEN) -->
+    <div id="splash-screen" class="screen active">
+        <div class="glitch-container">
+            <pre class="ascii-logo glitch" id="ascii-logo">  
+                                                  
+    ███████╗ █████╗ ████████╗ █████╗ ██╗     
+    ██╔════╝██╔══██╗╚══██╔══╝██╔══██╗██║     
+    █████╗  ███████║   ██║   ███████║██║     
+    ██╔══╝  ██╔══██║   ██║   ██╔══██║██║     
+    ██║     ██║  ██║   ██║   ██║  ██║███████╗
+    ╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
+                                              
+    ████████╗      ███████╗██████╗ ██████╗  ██████╗ ██████╗ 
+    ╚══██╔══╝      ██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔══██╗
+       ██║   █████╗█████╗  ██████╔╝██████╔╝██║   ██║██████╔╝
+       ██║   ╚════╝██╔══╝  ██╔══██╗██╔══██╗██║   ██║██╔══██╗
+       ██║         ███████╗██║  ██║██║  ██║╚██████╔╝██║  ██║
+       ╚═╝         ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
+            </pre>
+        </div>
+        
+        <div class="warning-text pulse-red">
+            <h1 class="glitch">⚠️ SISTEMA COMPROMETIDO ⚠️</h1>
+            <h2 class="typing-effect">DETECTADA AMENAZA CRÍTICA: "EL BUGGER"</h2>
+            <p class="blink-text">NIVEL DE RIESGO: MÁXIMO</p>
+        </div>
+        
+        <button id="start-btn" class="emergency-button pulse-red">
+            🚨 INICIAR PROTOCOLO DE EMERGENCIA 🚨
+        </button>
+        
+        <div class="system-info">
+            <p>SISTEMA v4.13.37 | ESTADO: INFECTADO | DEFCON: 1</p>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL (TERMINAL INFECTADA) -->
+    <div id="main-screen" class="screen">
+        <!-- Header del Sistema -->
+        <div class="system-header">
+            <div class="header-info">
+                <div class="info-block">
+                    <span class="label">FECHA/HORA:</span>
+                    <span id="system-time" class="value">--:--:--</span>
+                </div>
+                <div class="info-block">
+                    <span class="label">IP:</span>
+                    <span class="value">192.168.66.13</span>
+                </div>
+                <div class="info-block">
+                    <span class="label">ESTADO:</span>
+                    <span class="value critical">COMPROMETIDO</span>
+                </div>
+            </div>
+            
+            <div class="health-container">
+                <span class="label">SALUD DEL SISTEMA:</span>
+                <div class="health-bar-bg">
+                    <div id="health-bar" class="health-bar" style="width: 100%;">
+                        <span id="health-text">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Terminal de Logs -->
+            <div class="terminal-section">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-title">🐛 SISTEMA_INFECTADO@bugger - LOG DE ACTIVIDAD</span>
+                        <div class="terminal-buttons">
+                            <span class="btn-close"></span>
+                            <span class="btn-minimize"></span>
+                            <span class="btn-maximize"></span>
+                        </div>
+                    </div>
+                    <div id="terminal-logs" class="terminal-content">
+                        <!-- Los logs se añaden dinámicamente aquí -->
+                    </div>
+                    <div class="terminal-input-container">
+                        <span class="prompt">SISTEMA_INFECTADO@bugger:~$</span>
+                        <input type="text" id="terminal-input" class="terminal-input" 
+                               placeholder="Escribe 'help' para ayuda..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Lateral -->
+            <div class="sidebar">
+                <div class="threats-panel">
+                    <h3 class="panel-title">⚠️ AMENAZAS DETECTADAS</h3>
+                    <div id="threats-counter" class="threats-counter">
+                        <div class="threat-number">0</div>
+                    </div>
+                    <div id="threats-list" class="threats-list">
+                        <!-- Lista de amenazas -->
+                    </div>
+                </div>
+                
+                <div class="status-panel">
+                    <h3 class="panel-title">📊 ESTADO DE DEFENSA</h3>
+                    <div class="status-item">
+                        <span>🛡️ Firewall:</span>
+                        <span class="status-critical">DESHABILITADO</span>
+                    </div>
+                    <div class="status-item">
+                        <span>🦠 Antivirus:</span>
+                        <span class="status-critical">COMPROMETIDO</span>
+                    </div>
+                    <div class="status-item">
+                        <span>🔐 Cifrado:</span>
+                        <span class="status-warning">PARCIAL</span>
+                    </div>
+                    <div class="status-item">
+                        <span>💾 Backup:</span>
+                        <span class="status-warning">INACCESIBLE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RANSOMWARE -->
+    <div id="modal-ransomware" class="modal-scenario">
+        <div class="modal-matrix-bg"></div>
+        <div class="modal-content ransomware-content">
+            <div class="modal-header pulse-red">
+                <h2 class="glitch">🔒 TUS ARCHIVOS HAN SIDO CIFRADOS 🔒</h2>
+            </div>
+            <div class="modal-body">
+                <div class="ransomware-icon">🔐</div>
+                <p class="ransomware-message">
+                    Todos tus documentos, fotos y archivos han sido cifrados con algoritmo militar.<br>
+                    Solo el Bugger tiene la clave de descifrado.
+                </p>
+                <div class="game-instructions">
+                    <p>🎯 <strong>TU MISIÓN:</strong> Encuentra los 5 números NO binarios (2-9) entre el código binario (0-1)</p>
+                    <p class="hint">💡 Los números NO binarios aparecen en verde al pasar el ratón</p>
+                </div>
+                
+                <div class="countdown-timer">
+                    <span class="timer-label">TIEMPO PARA PAGAR:</span>
+                    <span id="ransomware-timer" class="timer-value">03:00</span>
+                </div>
+                
+                <div id="binary-matrix" class="binary-matrix">
+                    <!-- Matriz de binarios generada dinámicamente -->
+                </div>
+                
+                <div class="progress-bar">
+                    <div id="ransomware-progress" class="progress-fill"></div>
+                </div>
+                
+                <div class="found-keys">
+                    Claves encontradas: <span id="keys-found">0</span> / 5
+                </div>
+            </div>
+            
+            <div class="educational-content">
+                <h3>📚 ¿Qué es el Ransomware?</h3>
+                <p><strong>Definición:</strong> Malware que cifra archivos y exige rescate para recuperarlos.</p>
+                <p><strong>Prevención:</strong> Backups regulares, no abrir adjuntos sospechosos.</p>
+                <p><strong>Dato real:</strong> WannaCry (2017) afectó a más de 200,000 equipos en 150 países.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PHISHING -->
+    <div id="modal-phishing" class="modal-scenario">
+        <div class="modal-matrix-bg"></div>
+        <div class="modal-content phishing-content">
+            <div class="game-instructions">
+                <h3>🎯 TU MISIÓN: Identifica las 5 señales de phishing</h3>
+                <p>Haz clic en todos los elementos sospechosos del email</p>
+                <div class="phishing-progress">
+                    Elementos identificados: <span id="phishing-found">0</span> / 5
+                </div>
+            </div>
+            
+            <div class="email-window">
+                <div class="email-header">
+                    <div class="email-buttons">
+                        <button class="email-btn">← Volver</button>
+                        <button class="email-btn">Responder</button>
+                        <button class="email-btn critical">⚠️ Reportar Spam</button>
+                    </div>
+                </div>
+                
+                <div class="email-metadata">
+                    <div class="email-field">
+                        <strong>De:</strong> 
+                        <span class="suspicious" data-suspicious="true" data-hint="Dominio sospechoso">
+                            urgente_seguridad@institutto.es
+                        </span>
+                    </div>
+                    <div class="email-field">
+                        <strong>Para:</strong> tu_email@instituto.es
+                    </div>
+                    <div class="email-field">
+                        <strong>Asunto:</strong> 
+                        <span class="suspicious" data-suspicious="true" data-hint="Lenguaje de urgencia extrema">
+                            ⚠️ URGENTE: ACCESO SUSPENDIDO - Verificación Requerida INMEDIATA
+                        </span>
+                    </div>
+                    <div class="email-field">
+                        <strong>Fecha:</strong> Hoy, 23:47
+                    </div>
+                </div>
+                
+                <div class="email-body">
+                    <p>Estimado usuario,</p>
+                    <p class="suspicious" data-suspicious="true" data-hint="Errores ortográficos graves">
+                        Hemos detectado <strong>activvidad sospechoza</strong> en su cuenta. 
+                        Por razones de seguirdad, su aceso ha sido temporalmente suspendido.
+                    </p>
+                    <p>
+                        Para <strong>reactivar su cuenta inmediatamente</strong>, debe verificar 
+                        su identidad haciendo clic en el siguiente enlace:
+                    </p>
+                    <p class="center">
+                        <a href="#" class="phishing-link suspicious blink-text" 
+                           data-suspicious="true" data-hint="URL sospechosa (no coincide con dominio oficial)">
+                            🔗 http://instituto-verificacion-segura.tk/login.php
+                        </a>
+                    </p>
+                    <p class="suspicious" data-suspicious="true" data-hint="Presión de tiempo para no pensar">
+                        <strong>⏰ ADVERTENCIA:</strong> Si no verifica su identidad en las próximas 
+                        2 horas, su cuenta será <span class="critical">ELIMINADA PERMANENTEMENTE</span>.
+                    </p>
+                    <p>Atentamente,<br>
+                    <span style="color: #888;">Equipo de Seguridad del Instituto</span></p>
+                    
+                    <div class="email-footer">
+                        <small style="color: #666;">
+                            Este es un mensaje automático. No responda a este correo.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="educational-content">
+                <h3>📚 ¿Qué es el Phishing?</h3>
+                <p><strong>Definición:</strong> Técnica de suplantación de identidad para robar credenciales.</p>
+                <p><strong>Señales:</strong> Urgencia extrema, errores ortográficos, dominios extraños, enlaces sospechosos.</p>
+                <p><strong>Prevención:</strong> Verificar remitente, no hacer clic en enlaces sospechosos, comprobar URL.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MALWARE -->
+    <div id="modal-malware" class="modal-scenario">
+        <div class="modal-matrix-bg"></div>
+        <div class="modal-content malware-content">
+            <div class="malware-header pulse-red">
+                <h2 class="glitch">☠️ INYECCIÓN DE MALWARE DETECTADA ☠️</h2>
+            </div>
+            
+            <div class="malware-alert">
+                <div class="progress-bar-malware">
+                    <div class="progress-label">Instalando keylogger.exe...</div>
+                    <div class="progress-track">
+                        <div id="malware-install-progress" class="progress-fill-malware">87%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-rain">
+                <!-- Código corriendo a alta velocidad -->
+            </div>
+            
+            <div id="popup-container" class="popup-container">
+                <!-- Ventanas emergentes generadas dinámicamente -->
+            </div>
+            
+            <div class="game-instructions">
+                <h3>🎯 TU MISIÓN: Cierra todos los procesos maliciosos (10 ventanas)</h3>
+                <p>¡Haz clic en la X antes de que se multipliquen!</p>
+                <div class="malware-stats">
+                    <div>Ventanas cerradas: <span id="popups-closed">0</span> / 10</div>
+                    <div>Tiempo restante: <span id="malware-timer">00:45</span></div>
+                </div>
+            </div>
+            
+            <div class="educational-content">
+                <h3>📚 ¿Qué es el Malware?</h3>
+                <p><strong>Tipos:</strong> Virus, troyanos, spyware, keyloggers, rootkits, adware.</p>
+                <p><strong>Propagación:</strong> Descargas infectadas, USBs, sitios web comprometidos, emails.</p>
+                <p><strong>Protección:</strong> Antivirus actualizado, descargas solo de fuentes oficiales, análisis periódicos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DATA BREACH -->
+    <div id="modal-databreach" class="modal-scenario">
+        <div class="modal-matrix-bg"></div>
+        <div class="modal-content databreach-content">
+            <div class="databreach-header pulse-red">
+                <h2 class="glitch">🚨 BRECHA DE SEGURIDAD - DATOS EXPUESTOS 🚨</h2>
+            </div>
+            
+            <div class="matrix-effect">
+                <div class="matrix-column"></div>
+                <div class="matrix-column"></div>
+                <div class="matrix-column"></div>
+                <div class="matrix-column"></div>
+                <div class="matrix-column"></div>
+            </div>
+            
+            <div class="leaked-data">
+                <h3 class="blink-text">⚠️ DATOS PERSONALES FILTRADOS ⚠️</h3>
+                <div class="data-items">
+                    <div class="data-item critical">📧 Email: usuario@instituto.es</div>
+                    <div class="data-item critical">🔑 Password: ********</div>
+                    <div class="data-item critical">📱 Teléfono: +34 XXX XXX XXX</div>
+                    <div class="data-item critical">🏠 Dirección: Calle XXXXXX</div>
+                    <div class="data-item critical">💳 Tarjeta: **** **** **** 1234</div>
+                </div>
+                <p class="warning-message">
+                    ☠️ Acceso no autorizado desde 47 ubicaciones simultáneas
+                </p>
+            </div>
+            
+            <div class="defense-panel">
+                <h3>🎯 TU MISIÓN: Activa todas las defensas en el orden correcto</h3>
+                <p class="hint">💡 Lee las pistas para saber el orden</p>
+                
+                <div class="defense-grid">
+                    <div class="defense-item" data-order="1" data-name="firewall">
+                        <div class="defense-icon">🛡️</div>
+                        <div class="defense-name">Firewall</div>
+                        <button class="defense-toggle" data-defense="firewall">ACTIVAR</button>
+                        <div class="defense-hint">1️⃣ Primera línea de defensa</div>
+                    </div>
+                    
+                    <div class="defense-item" data-order="2" data-name="antivirus">
+                        <div class="defense-icon">🦠</div>
+                        <div class="defense-name">Antivirus</div>
+                        <button class="defense-toggle" data-defense="antivirus">ACTIVAR</button>
+                        <div class="defense-hint">2️⃣ Escanea amenazas conocidas</div>
+                    </div>
+                    
+                    <div class="defense-item" data-order="3" data-name="2fa">
+                        <div class="defense-icon">🔐</div>
+                        <div class="defense-name">2FA</div>
+                        <button class="defense-toggle" data-defense="2fa">ACTIVAR</button>
+                        <div class="defense-hint">3️⃣ Doble verificación</div>
+                    </div>
+                    
+                    <div class="defense-item" data-order="4" data-name="vpn">
+                        <div class="defense-icon">🌐</div>
+                        <div class="defense-name">VPN</div>
+                        <button class="defense-toggle" data-defense="vpn">ACTIVAR</button>
+                        <div class="defense-hint">4️⃣ Cifra la conexión</div>
+                    </div>
+                    
+                    <div class="defense-item" data-order="5" data-name="backup">
+                        <div class="defense-icon">💾</div>
+                        <div class="defense-name">Backup</div>
+                        <button class="defense-toggle" data-defense="backup">ACTIVAR</button>
+                        <div class="defense-hint">5️⃣ Recuperación de datos</div>
+                    </div>
+                    
+                    <div class="defense-item" data-order="6" data-name="encryption">
+                        <div class="defense-icon">🔒</div>
+                        <div class="defense-name">Cifrado</div>
+                        <button class="defense-toggle" data-defense="encryption">ACTIVAR</button>
+                        <div class="defense-hint">6️⃣ Protección final</div>
+                    </div>
+                </div>
+                
+                <div class="defense-progress">
+                    Defensas activadas: <span id="defenses-activated">0</span> / 6<br>
+                    Tiempo restante: <span id="databreach-timer">01:30</span>
+                </div>
+            </div>
+            
+            <div class="educational-content">
+                <h3>📚 ¿Qué es un Data Breach?</h3>
+                <p><strong>Definición:</strong> Acceso no autorizado a información sensible o confidencial.</p>
+                <p><strong>Consecuencias:</strong> Robo de identidad, fraude financiero, extorsión, pérdida de privacidad.</p>
+                <p><strong>Defensas:</strong> 2FA obligatorio, contraseñas únicas y fuertes, VPN en redes públicas, cifrado de datos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="final-screen" class="screen">
+        <div id="final-content" class="final-content">
+            <!-- Contenido generado dinámicamente según resultado -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
