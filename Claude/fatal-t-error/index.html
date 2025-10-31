@@ -12,6 +12,11 @@
     
     <!-- Efecto Matrix de fondo (aparece con amenazas) -->
     <div id="matrix-bg-effect" class="matrix-bg-effect"></div>
+    
+    <!-- Audio de fondo -->
+    <audio id="background-music" loop>
+        <source src="assets/sounds/fondo.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- PANTALLA DE INICIO (SPLASH SCREEN) -->
     <div id="splash-screen" class="screen active">
@@ -43,6 +48,11 @@
         <button id="start-btn" class="emergency-button pulse-red">
             🚨 INICIAR PROTOCOLO DE EMERGENCIA 🚨
         </button>
+        
+        <div class="volume-control">
+            <label for="volume-slider">🔊 Volumen: <span id="volume-value">30</span>%</label>
+            <input type="range" id="volume-slider" min="0" max="100" value="30">
+        </div>
         
         <div class="system-info">
             <p>SISTEMA v4.13.37 | ESTADO: INFECTADO | DEFCON: 1</p>
@@ -151,7 +161,6 @@
                 </p>
                 <div class="game-instructions">
                     <p>🎯 <strong>TU MISIÓN:</strong> Encuentra los 5 números NO binarios (2-9) entre el código binario (0-1)</p>
-                    <p class="hint">💡 Los números NO binarios aparecen en verde al pasar el ratón</p>
                 </div>
                 
                 <div class="countdown-timer">
@@ -347,6 +356,13 @@
         <div id="final-content" class="final-content">
             <!-- Contenido generado dinámicamente según resultado -->
         </div>
+    </div>
+
+    <!-- SCREAMER MODAL -->
+    <div id="screamer-modal" class="screamer-modal">
+        <video id="screamer-video" class="screamer-video" playsinline preload="auto">
+            <source src="assets/images/scream.mp4" type="video/mp4">
+        </video>
     </div>
 
     <script src="script.js"></script>

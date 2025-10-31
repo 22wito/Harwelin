@@ -16,6 +16,7 @@ let logInterval = null;
 let healthInterval = null;
 let scenarioTimeout = null;
 let glitchInterval = null;
+let backgroundMusic = null;
 
 const scenarios = ['ransomware', 'phishing', 'malware', 'databreach'];
 let completedScenarios = [];
@@ -293,17 +294,13 @@ let ransomwareTimer = 60;
 let ransomwareInterval = null;
 let keysToFind = [];
 let keysFound = 0;
+let ransomwareFails = 0; // Contador de fallos
 
-function startRansomwareGame() {
-    console.log('🔒 Starting Ransomware game');
-    
-    ransomwareTimer = 60;
-    keysToFind = [];
-    keysFound = 0;
-    
-    // Generar matriz de binarios
+// Función para generar la matriz binaria
+function generateBinaryMatrix() {
     const matrix = document.getElementById('binary-matrix');
     matrix.innerHTML = '';
+    keysToFind = [];
     
     const totalChars = 100;
     const keyPositions = [];
@@ -328,26 +325,90 @@ function startRansomwareGame() {
             char.dataset.key = 'true';
             keysToFind.push(char);
         } else {
-            // El resto son 0 o 1 (binarios)
+            // El resto son 0 o 1 (binarios) - NUEVOS en cada regeneración
             char.textContent = randomBetween(0, 1);
         }
         
-        char.addEventListener('click', () => {
-            if (char.dataset.key === 'true' && !char.classList.contains('found')) {
-                char.classList.add('found');
-                keysFound++;
-                document.getElementById('keys-found').textContent = keysFound;
-                document.getElementById('ransomware-progress').style.width = (keysFound / 5 * 100) + '%';
-                
-                if (keysFound === 5) {
-                    clearInterval(ransomwareInterval);
-                    closeScenario('ransomware', true);
-                }
-            }
-        });
-        
+        char.addEventListener('click', handleBinaryClick);
         matrix.appendChild(char);
     }
+}
+
+// Handler de clicks en caracteres binarios
+function handleBinaryClick(e) {
+    const char = e.target;
+    
+    if (char.dataset.key === 'true' && !char.classList.contains('found')) {
+        // ✅ ACIERTO - Click en clave correcta
+        char.classList.add('found');
+        keysFound++;
+        document.getElementById('keys-found').textContent = keysFound;
+        document.getElementById('ransomware-progress').style.width = (keysFound / 5 * 100) + '%';
+        
+        addSystemLog(`✓ Clave ${keysFound}/5 encontrada`, 'success');
+        
+        if (keysFound === 5) {
+            // ¡Victoria!
+            clearInterval(ransomwareInterval);
+            closeScenario('ransomware', true);
+        }
+    } else if (char.dataset.key !== 'true') {
+        // ❌ FALLO - Click en número binario
+        ransomwareFails++;
+        addSystemLog(`☠️ ERROR: Código incorrecto seleccionado (Fallo ${ransomwareFails}/3)`, 'critical');
+        
+        // Efecto visual de error
+        char.style.background = 'rgba(255, 0, 0, 0.8)';
+        setTimeout(() => {
+            char.style.background = '';
+        }, 300);
+        
+        // Pausar el timer durante el screamer
+        clearInterval(ransomwareInterval);
+        
+        // SCREAMER EN CADA FALLO
+        triggerScreamer(() => {
+            // Después del screamer...
+            
+            if (ransomwareFails >= 3) {
+                // ☠️ TERCER FALLO = PERDER EL MINIJUEGO
+                addSystemLog('💀 3 FALLOS - RANSOMWARE COMPLETADO. ARCHIVOS CIFRADOS.', 'critical');
+                closeScenario('ransomware', false);
+            } else {
+                // 🔄 Fallo 1 o 2: Regenerar matriz y continuar
+                addSystemLog(`🔄 Sistema regenerando códigos de descifrado... (Fallo ${ransomwareFails}/3)`, 'warning');
+                
+                // Regenerar matriz con NUEVOS números aleatorios
+                generateBinaryMatrix();
+                
+                // Reanudar timer
+                ransomwareInterval = setInterval(() => {
+                    ransomwareTimer--;
+                    document.getElementById('ransomware-timer').textContent = formatTime(ransomwareTimer);
+                    
+                    if (ransomwareTimer <= 0) {
+                        clearInterval(ransomwareInterval);
+                        closeScenario('ransomware', false);
+                    }
+                }, 1000);
+            }
+        });
+    }
+}
+
+function startRansomwareGame() {
+    console.log('🔒 Starting Ransomware game');
+    
+    ransomwareTimer = 60;
+    keysFound = 0;
+    ransomwareFails = 0; // Reset contador de fallos
+    
+    // Actualizar UI inicial
+    document.getElementById('keys-found').textContent = keysFound;
+    document.getElementById('ransomware-progress').style.width = '0%';
+    
+    // Generar matriz inicial
+    generateBinaryMatrix();
     
     // Timer
     document.getElementById('ransomware-timer').textContent = formatTime(ransomwareTimer);
@@ -364,44 +425,92 @@ function startRansomwareGame() {
 
 // PHISHING - Identificar elementos sospechosos
 let phishingFound = 0;
+let phishingFails = 0; // Contador de fallos
 const phishingTotal = 5;
 
 function startPhishingGame() {
     console.log('📧 Starting Phishing game');
     
     phishingFound = 0;
+    phishingFails = 0; // Reset fallos
     document.getElementById('phishing-found').textContent = '0';
     
     // Generar email aleatorio
     generateRandomPhishingEmail();
     
     // Resetear elementos sospechosos
-    const suspiciousElements = document.querySelectorAll('#modal-phishing .suspicious');
-    suspiciousElements.forEach(element => {
-        element.classList.remove('identified');
-        element.style.pointerEvents = 'auto';
+    setupPhishingClickHandlers();
+}
+
+function setupPhishingClickHandlers() {
+    const modal = document.getElementById('modal-phishing');
+    
+    // Remover event listeners anteriores
+    const newModal = modal.cloneNode(true);
+    modal.parentNode.replaceChild(newModal, modal);
+    
+    const emailContainer = newModal.querySelector('#phishing-email-container');
+    
+    // Handler para todos los clicks en el email
+    emailContainer.addEventListener('click', function(e) {
+        const target = e.target.closest('.suspicious, p, div, span, strong, a, button');
         
-        // Remover event listener anterior si existe
-        const newElement = element.cloneNode(true);
-        element.parentNode.replaceChild(newElement, element);
+        if (!target || target.classList.contains('identified')) {
+            return; // Ya identificado o click en elemento no interactivo
+        }
         
-        newElement.addEventListener('click', function handleClick() {
-            if (this.dataset.suspicious === 'true' && !this.classList.contains('identified')) {
-                this.classList.add('identified');
-                phishingFound++;
-                document.getElementById('phishing-found').textContent = phishingFound;
-                
-                // Mostrar hint
-                const hint = this.dataset.hint;
-                addSystemLog(`✓ Identificado: ${hint}`, 'success');
-                
-                if (phishingFound === phishingTotal) {
-                    setTimeout(() => {
-                        closeScenario('phishing', true);
-                    }, 1000);
-                }
+        // Verificar si es elemento sospechoso
+        if (target.classList.contains('suspicious') && target.dataset.suspicious === 'true') {
+            // ✅ ACIERTO
+            target.classList.add('identified');
+            phishingFound++;
+            document.getElementById('phishing-found').textContent = phishingFound;
+            
+            // Mostrar hint
+            const hint = target.dataset.hint;
+            addSystemLog(`✓ Identificado: ${hint}`, 'success');
+            
+            if (phishingFound === phishingTotal) {
+                setTimeout(() => {
+                    closeScenario('phishing', true);
+                }, 1000);
             }
-        });
+        } else if (target.tagName === 'P' || target.tagName === 'SPAN' || target.tagName === 'STRONG' || target.tagName === 'DIV') {
+            // ❌ FALLO - Click en elemento NO sospechoso
+            // Ignorar clicks en email-header, email-metadata, email-footer
+            if (target.closest('.email-header') || target.closest('.email-metadata') || target.closest('.email-footer')) {
+                return;
+            }
+            
+            // Verificar que no sea un elemento ya marcado o padre de uno sospechoso
+            if (target.querySelector('.suspicious') || target.classList.contains('identified')) {
+                return;
+            }
+            
+            phishingFails++;
+            addSystemLog(`☠️ ERROR: Elemento legítimo marcado como sospechoso (Fallo ${phishingFails}/3)`, 'critical');
+            
+            // Efecto visual de error
+            const originalBg = target.style.background;
+            target.style.background = 'rgba(255, 0, 0, 0.3)';
+            target.style.transition = 'background 0.3s';
+            
+            setTimeout(() => {
+                target.style.background = originalBg;
+            }, 300);
+            
+            // SCREAMER EN CADA FALLO
+            triggerScreamer(() => {
+                if (phishingFails >= 3) {
+                    // ☠️ TERCER FALLO = PERDER EL MINIJUEGO
+                    addSystemLog('💀 3 FALLOS - PHISHING EXITOSO. CREDENCIALES COMPROMETIDAS.', 'critical');
+                    closeScenario('phishing', false);
+                } else {
+                    // 🔄 Fallo 1 o 2: Continuar jugando
+                    addSystemLog(`⚠️ Cuidado con marcar elementos legítimos (Fallo ${phishingFails}/3)`, 'warning');
+                }
+            });
+        }
     });
 }
 
@@ -644,6 +753,7 @@ let dataBreachTimer = 90;
 let dataBreachInterval = null;
 let defensesActivated = 0;
 let currentDefenseOrder = 1;
+let dataBreachFails = 0; // Contador de fallos
 
 function startDataBreachGame() {
     console.log('🚨 Starting Data Breach game');
@@ -651,13 +761,30 @@ function startDataBreachGame() {
     dataBreachTimer = 90;
     defensesActivated = 0;
     currentDefenseOrder = 1;
+    dataBreachFails = 0; // Reset fallos
     document.getElementById('defenses-activated').textContent = '0';
     document.getElementById('databreach-timer').textContent = formatTime(dataBreachTimer);
     
     // Generar efecto Matrix
     generateMatrixEffect();
     
-    // Desordenar defensas aleatoriamente
+    // Configurar defensas
+    setupDataBreachDefenses();
+    
+    // Timer
+    dataBreachInterval = setInterval(() => {
+        dataBreachTimer--;
+        document.getElementById('databreach-timer').textContent = formatTime(dataBreachTimer);
+        
+        if (dataBreachTimer <= 0) {
+            clearInterval(dataBreachInterval);
+            closeScenario('databreach', false);
+        }
+    }, 1000);
+}
+
+// Configurar defensas (separado para poder resetear)
+function setupDataBreachDefenses() {
     const defenseGrid = document.querySelector('#modal-databreach .defense-grid');
     const defenseItems = Array.from(document.querySelectorAll('#modal-databreach .defense-item'));
     
@@ -690,7 +817,7 @@ function startDataBreachGame() {
             const order = parseInt(defenseItem.dataset.order);
             
             if (order === currentDefenseOrder) {
-                // Correcto
+                // ✅ CORRECTO
                 defenseItem.classList.add('active');
                 this.disabled = true;
                 this.textContent = '✓ ACTIVO';
@@ -698,34 +825,59 @@ function startDataBreachGame() {
                 currentDefenseOrder++;
                 document.getElementById('defenses-activated').textContent = defensesActivated;
                 
-                addSystemLog(`✓ ${defenseItem.dataset.name.toUpperCase()} activado correctamente`, 'success');
+                addSystemLog(`✓ ${defenseItem.dataset.name.toUpperCase()} activado correctamente (${defensesActivated}/6)`, 'success');
                 
                 if (defensesActivated === 6) {
                     clearInterval(dataBreachInterval);
                     closeScenario('databreach', true);
                 }
             } else {
-                // Incorrecto
+                // ❌ INCORRECTO
+                dataBreachFails++;
+                addSystemLog(`☠️ ERROR: Defensa activada en orden incorrecto (Fallo ${dataBreachFails}/3)`, 'critical');
+                
+                // Efecto visual de error
                 defenseItem.classList.add('error');
                 setTimeout(() => {
                     defenseItem.classList.remove('error');
                 }, 500);
-                addSystemLog(`✗ Orden incorrecto - Sigue las pistas`, 'warning');
-                updateSystemHealth(-5);
+                
+                // Pausar timer durante el screamer
+                clearInterval(dataBreachInterval);
+                
+                // SCREAMER EN CADA FALLO
+                triggerScreamer(() => {
+                    if (dataBreachFails >= 3) {
+                        // ☠️ TERCER FALLO = PERDER EL MINIJUEGO
+                        addSystemLog('💀 3 FALLOS - DATA BREACH EXITOSO. INFORMACIÓN COMPROMETIDA.', 'critical');
+                        closeScenario('databreach', false);
+                    } else {
+                        // 🔄 Fallo 1 o 2: RESETEAR defensas y cambiar orden
+                        addSystemLog(`🔄 Sistema reseteando protecciones... (Fallo ${dataBreachFails}/3)`, 'warning');
+                        
+                        // Resetear progreso
+                        defensesActivated = 0;
+                        currentDefenseOrder = 1;
+                        document.getElementById('defenses-activated').textContent = '0';
+                        
+                        // Reconfigurar defensas con NUEVO orden aleatorio
+                        setupDataBreachDefenses();
+                        
+                        // Reanudar timer
+                        dataBreachInterval = setInterval(() => {
+                            dataBreachTimer--;
+                            document.getElementById('databreach-timer').textContent = formatTime(dataBreachTimer);
+                            
+                            if (dataBreachTimer <= 0) {
+                                clearInterval(dataBreachInterval);
+                                closeScenario('databreach', false);
+                            }
+                        }, 1000);
+                    }
+                });
             }
         });
     });
-    
-    // Timer
-    dataBreachInterval = setInterval(() => {
-        dataBreachTimer--;
-        document.getElementById('databreach-timer').textContent = formatTime(dataBreachTimer);
-        
-        if (dataBreachTimer <= 0) {
-            clearInterval(dataBreachInterval);
-            closeScenario('databreach', false);
-        }
-    }, 1000);
 }
 
 // Caracteres Matrix (constante global)
@@ -779,6 +931,12 @@ function victory() {
 
 function showFinalScreen(survived) {
     console.log('📊 Showing final screen, survived:', survived);
+    
+    // Pausar música de fondo
+    if (backgroundMusic) {
+        backgroundMusic.pause();
+        console.log('🎵 Música de fondo pausada');
+    }
     
     // Ocultar pantalla principal
     document.getElementById('main-screen').classList.remove('active');
@@ -960,6 +1118,12 @@ function resetGame() {
     // Limpiar intervalos
     clearAllIntervals();
     
+    // Detener música
+    if (backgroundMusic) {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+    }
+    
     // Reset UI
     document.getElementById('health-bar').style.width = '100%';
     document.getElementById('health-text').textContent = '100%';
@@ -986,6 +1150,15 @@ function initGame() {
     console.log('🎮 Initializing game...');
     
     gameActive = true;
+    
+    // Reproducir música de fondo
+    if (backgroundMusic) {
+        backgroundMusic.play().then(() => {
+            console.log('🎵 Música de fondo iniciada');
+        }).catch(error => {
+            console.log('⚠️ No se pudo reproducir la música:', error);
+        });
+    }
     
     // Ocultar splash screen
     document.getElementById('splash-screen').classList.remove('active');
@@ -1022,6 +1195,24 @@ function initGame() {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('📄 DOM loaded');
+    
+    // Inicializar música de fondo
+    backgroundMusic = document.getElementById('background-music');
+    if (backgroundMusic) {
+        backgroundMusic.volume = 0.3; // Volumen al 30%
+        console.log('🎵 Música de fondo lista');
+    }
+    
+    // Control de volumen
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.getElementById('volume-value');
+    if (volumeSlider && backgroundMusic) {
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            backgroundMusic.volume = volume;
+            volumeValue.textContent = e.target.value;
+        });
+    }
     
     // Botón de inicio
     const startBtn = document.getElementById('start-btn');
@@ -1127,6 +1318,58 @@ function stopMatrixEffect() {
     setTimeout(() => matrixBg.innerHTML = '', 500);
 }
 
+// === SCREAMER EFFECT ===
+function triggerScreamer(callback) {
+    console.log('👹 SCREAMER ACTIVADO!');
+    
+    const screamerModal = document.getElementById('screamer-modal');
+    const screamerVideo = document.getElementById('screamer-video');
+    
+    if (!screamerModal || !screamerVideo) {
+        console.error('❌ Elementos del screamer no encontrados');
+        if (callback) callback();
+        return;
+    }
+    
+    console.log('✅ Elementos encontrados, mostrando screamer...');
+    console.log('📹 Ruta del video:', screamerVideo.querySelector('source')?.src);
+    
+    // Mostrar modal primero
+    screamerModal.style.display = 'flex';
+    screamerModal.classList.add('active');
+    
+    // Configurar y reproducir video (el video incluye el audio)
+    screamerVideo.currentTime = 0;
+    screamerVideo.muted = false; // Desmutear video para escuchar audio
+    screamerVideo.volume = 1.0;
+    
+    // Reproducir video con logs detallados
+    screamerVideo.play()
+        .then(() => {
+            console.log('✅ Video reproduciendo correctamente');
+            console.log('📊 Duración del video:', screamerVideo.duration, 'segundos');
+        })
+        .catch(err => {
+            console.error('❌ Error reproduciendo video:', err);
+            console.error('📝 Estado del video:', {
+                readyState: screamerVideo.readyState,
+                networkState: screamerVideo.networkState,
+                error: screamerVideo.error
+            });
+        });
+    
+    // Ocultar después de 1.5 segundos (más corto porque salta en cada fallo)
+    setTimeout(() => {
+        console.log('🔚 Finalizando screamer...');
+        screamerModal.classList.remove('active');
+        screamerModal.style.display = 'none';
+        screamerVideo.pause();
+        screamerVideo.currentTime = 0;
+        
+        if (callback) callback();
+    }, 1500); // 1.5 segundos de screamer
+}
+
 // === EXPORTS (para debugging en consola) ===
 window.FatalTError = {
     systemHealth,
@@ -1137,6 +1380,7 @@ window.FatalTError = {
     forceScenario: (name) => launchScenario(name),
     addHealth: (amount) => updateSystemHealth(amount),
     triggerGlitch,
+    triggerScreamer,
     resetGame,
     startMatrixEffect,
     stopMatrixEffect
